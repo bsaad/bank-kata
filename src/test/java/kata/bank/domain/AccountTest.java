@@ -13,14 +13,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class AccountTest {
 
     @Test
-    public void should_update_balance_after_deposit() {
+    public void should_update_balance_after_deposit() throws InsufficientBalanceException {
 
         // Given
-        Account account = new Account("1");
+        Account account = new Account();
 
         // When
-        account.deposit(new BigDecimal(50));
-        account.deposit(new BigDecimal(70));
+        account.processOperation(Deposit, new BigDecimal(50));
+        account.processOperation(Deposit, new BigDecimal(70));
 
         // Then
         assertThat(account.getBalance()).isEqualTo(new BigDecimal(120));
@@ -30,36 +30,36 @@ class AccountTest {
     public void should_update_balance_after_withdrawal() throws InsufficientBalanceException {
 
         // Given
-        Account account = new Account("1");
+        Account account = new Account();
 
         // When
-        account.deposit(new BigDecimal(100));
-        account.withdraw(new BigDecimal(70));
+        account.processOperation(Deposit, new BigDecimal(100));
+        account.processOperation(Withdrawal, new BigDecimal(70));
 
         // Then
         assertThat(account.getBalance()).isEqualTo(new BigDecimal(30));
     }
 
     @Test
-    public void should_fail_withdrawal_when_insufficient_balance() {
+    public void should_fail_withdrawal_when_insufficient_balance() throws InsufficientBalanceException {
 
         // Given
-        Account account = new Account("1");
-        account.deposit(new BigDecimal(100));
+        Account account = new Account();
+        account.processOperation(Deposit, new BigDecimal(100));
 
         // Then
-        assertThrows(InsufficientBalanceException.class, () -> account.withdraw(new BigDecimal(200)));
+        assertThrows(InsufficientBalanceException.class, () -> account.processOperation(Withdrawal, new BigDecimal(200)));
     }
 
     @Test
     public void should_log_operations() throws InsufficientBalanceException {
         // Given
-        Account account = new Account("1");
+        Account account = new Account();
 
         // When
-        account.deposit(new BigDecimal(100));
-        account.withdraw(new BigDecimal(70));
-        account.deposit(new BigDecimal(200));
+        account.processOperation(Deposit, new BigDecimal(100));
+        account.processOperation(Withdrawal, new BigDecimal(70));
+        account.processOperation(Deposit, new BigDecimal(200));
 
         // Then
         List<Operation> operations = account.getOperations();

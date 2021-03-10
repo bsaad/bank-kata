@@ -1,4 +1,4 @@
 package kata.bank.domain.exceptions;
 
-public class InsufficientBalanceException extends Exception {
+public class InsufficientBalanceException extends RuntimeException {
 }
